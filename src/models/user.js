@@ -10,14 +10,16 @@ module.exports = (sequelize) => {
         userName: {
             type: DataTypes.TEXT,
             allowNull: false,
-            unique: true
-
         },
         userEmail: {
             type: DataTypes.TEXT,
             unique: true,
             allowNull: false,
         },
+        userPassword:{
+            type: DataTypes.TEXT,
+            allowNull: false,
+        }
     }, {
         tableName: 'User',
     });

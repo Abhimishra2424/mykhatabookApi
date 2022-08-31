@@ -42,7 +42,34 @@ require("dotenv").config();
 // }
 
 const createUser = async (req, res) => {
-    res.send("createUser")
+    const { userName, userEmail , userPassword } = req.body;
+
+    try {
+        let user = await User.findOne({ userEmail });
+
+        if (user && user.userEmail === userEmail) {
+             return res.status(400).json({ msg: 'user already exists' });
+        }
+
+      user = new User({
+            userName,
+            userEmail,
+            userPassword,
+        });
+
+        const salt = await bcrypt.genSalt(10);
+
+        user.userPassword = await bcrypt.hash(userPassword, salt);
+
+        await user.save();
+
+
+        return res.json({ msg: 'user registered', user });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
 }
 
 
