@@ -72,6 +72,54 @@ const createUser = async (req, res) => {
     }
 }
 
+const loginUser = async (req, res) => {
+    var {  userEmail, userPassword } = req.body
+
+    try {
+        let user = await User.findAll({ userEmail });
+         
+        let matchUser =  user.filter(u => u.userEmail === userEmail);
+
+
+        if (!matchUser) {
+            return res.status(400).json({ msg: 'Invalid Credentials' });
+        }
+
+        var password =  userPassword.toString()
+        const isMatch = await bcrypt.compare(password, matchUser[0].userPassword);
+
+        if (!isMatch) {
+            return res.status(400).json({ msg: 'Your password Wrong' });
+        }
+        
+        const payload = {
+            user: {
+                user_id: matchUser[0].user_id,
+                userName: matchUser[0].userName,
+                userEmail: matchUser[0].userEmail,
+            }
+        };
+
+        var token = jwt.sign({ payload },  process.env.JWT_SECRET, {
+            expiresIn:  process.env.JWT_LIFETIME
+        });
+
+        var userdata = {
+            user_id: matchUser[0].user_id,
+            userName: matchUser[0].userName,
+            userEmail: matchUser[0].userEmail,
+        }    
+
+        return res.json({
+            token: token,
+            user: userdata
+        });
+
+    } catch (error) {
+        console.error(error.message);
+        res.status(500).send('Server error');
+    }
+}
 
 // const loginCompany = async (req, res) => {
 
@@ -146,5 +194,6 @@ const createUser = async (req, res) => {
  
 
 module.exports = {
-    createUser
+    createUser,
+    loginUser
 }
