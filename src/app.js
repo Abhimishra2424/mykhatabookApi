@@ -17,13 +17,9 @@ app.use(cors())
 // Morgan
 app.use(morgan('dev'))
 // Company
-// const companyRoutes = require('./routes/company');
-// const employeeRoutes = require('./routes/employee');
-// const taskRoutes = require('./routes/task');
+const userRoutes = require('./routes/user');
 
-// app.use('/api', companyRoutes);
-// app.use('/api', employeeRoutes);
-// app.use('/api', taskRoutes);
+app.use('/api', userRoutes);
 
 app.use('/', (req, res) => {
     res.send('Server is Ready For Rock');
